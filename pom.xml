@@ -1,0 +1,159 @@
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ualberta.edu.guana.tools.atl</groupId>
+	<artifactId>atlauncher</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>ATLauncher</name>
+
+	<properties>
+		<atlVersion>[3.6,)</atlVersion>
+		<eclipseCoreVersion>[3.6,)</eclipseCoreVersion>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>eclipse-release</id>
+			<url>https://repo.eclipse.org/content/groups/releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>Eclipse</id>
+			<url> https://repo.eclipse.org/content/groups/atl </url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+
+	</repositories>
+
+
+
+	<build>
+		<sourceDirectory>ATLauncher/src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>ualberta.edu.guana.tools.atl.ATLLauncher</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.common</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore</artifactId>
+			<version>2.11.1</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+			<version>2.12.0</version>
+		</dependency>
+		
+				<!-- org.eclipse.m2m.atl.core_3.6.0.v201505180909.jar -->
+		<dependency>
+			<groupId>org.eclipse.m2m.atl</groupId>
+			<artifactId>org.eclipse.m2m.atl.core</artifactId>
+			<version>${atlVersion}</version>
+		</dependency>
+
+		<!--         org.eclipse.m2m.atl.common_3.6.0.v201505180909.jar -->
+		<dependency>
+			<groupId>org.eclipse.m2m.atl</groupId>
+			<artifactId>org.eclipse.m2m.atl.common</artifactId>
+			<version>${atlVersion}</version>
+		</dependency>
+
+		<!-- org.eclipse.m2m.atl.core.emf_3.6.0.v201505180909.jar -->
+		<dependency>
+			<groupId>org.eclipse.m2m.atl</groupId>
+			<artifactId>org.eclipse.m2m.atl.core.emf</artifactId>
+			<version>${atlVersion}</version>
+		</dependency>
+
+		<!-- org.eclipse.m2m.atl.engine_3.8.0.v201705182014.jar -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.eclipse.m2m.atl</groupId> -->
+<!-- 			<artifactId>org.eclipse.m2m.atl.engine</artifactId> -->
+<!-- 			<version>${atlVersion}</version> -->
+<!-- 		</dependency> -->
+
+		<dependency>
+			<groupId>org.eclipse.m2m.atl</groupId>
+			<artifactId>org.eclipse.m2m.atl.emftvm</artifactId>
+			<version>${atlVersion}</version>
+		</dependency>
+
+
+		<!-- org.eclipse.m2m.atl.engine.emfvm_3.8.0.v201705182014.jar -->
+		<dependency>
+			<groupId>org.eclipse.m2m.atl</groupId>
+			<artifactId>org.eclipse.m2m.atl.engine.emfvm</artifactId>
+			<version>${atlVersion}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.ecf</groupId>
+			<artifactId>org.objectweb.asm</artifactId>
+			<version>5.0.1.v201404251740</version>
+		</dependency>
+
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>4.0.0-beta-2</version>
+		</dependency>
+
+
+	</dependencies>
+</project>

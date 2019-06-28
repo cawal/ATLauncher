@@ -2,6 +2,8 @@ package ualberta.edu.guana.tools.atl;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.concurrent.Callable;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -22,6 +24,9 @@ import org.eclipse.m2m.atl.emftvm.util.DefaultModuleResolver;
 import org.eclipse.m2m.atl.emftvm.util.ModuleResolver;
 import org.eclipse.m2m.atl.emftvm.util.TimingData;
 
+import picocli.CommandLine;
+import picocli.CommandLine.Parameters;
+
 /**
  * An off-the-shelf launcher for ATL/EMFTVM transformations
  * @author Victor Guana - guana@ualberta.ca
@@ -29,19 +34,49 @@ import org.eclipse.m2m.atl.emftvm.util.TimingData;
  * Edmonton, Alberta. Canada
  * Using code examples from: https://wiki.eclipse.org/ATL/EMFTVM
  */
-public class ATLLauncher {
+public class ATLLauncher implements Callable<Integer> {
 	
 	// Some constants for quick initialization and testing.
-	public final static String IN_METAMODEL = "./metamodels/Composed.ecore";
-	public final static String IN_METAMODEL_NAME = "Composed";
-	public final static String OUT_METAMODEL = "./metamodels/Simple.ecore";
-	public final static String OUT_METAMODEL_NAME = "Simple";
 	
-	public final static String IN_MODEL = "./models/composed.xmi";
-	public final static String OUT_MODEL = "./models/simple.xmi";
+	@Parameters(index = "0",
+			description = "The input metamodel name in ATL",
+			paramLabel = "input_metamodel_name")
+	public String IN_METAMODEL_NAME; // = "Composed";
 	
-	public final static String TRANSFORMATION_DIR = "./transformations/";
-	public final static String TRANSFORMATION_MODULE= "Composed2Simple";
+	@Parameters(index = "1",
+			description = "The input metamodel path",
+			paramLabel = "input_metamodel")
+	public String IN_METAMODEL;// = "./metamodels/Composed.ecore";
+	
+	@Parameters(index = "2",
+			description = "The input model path",
+			paramLabel = "input_model")
+	public String IN_MODEL;// = "./models/composed.xmi";
+	
+	@Parameters(index = "3",
+			description = "The output metamodel name in ATL",
+			paramLabel = "output_metamodel_name")
+	public String OUT_METAMODEL_NAME;// = "Simple";
+
+	@Parameters(index = "4",
+			description = "The output metamodel path",
+			paramLabel = "ouput_metamodel")
+	public String OUT_METAMODEL;// = "./metamodels/Simple.ecore";
+	
+	@Parameters(index = "5",
+			description = "The output model path",
+			paramLabel = "ouput_model")
+	public String OUT_MODEL;// = "./models/simple.xmi";
+	
+	@Parameters(index = "6",
+			description = "The directory to find the transfomation definition (ASM)",
+			paramLabel = "transformation_dir")
+	public String TRANSFORMATION_DIR;// = "./transformations/";
+	
+	@Parameters(index = "7",
+			description = "The module name of the transformation",
+			paramLabel = "transformation_module")
+	public String TRANSFORMATION_MODULE;//= "Composed2Simple";
 	
 	// The input and output metamodel nsURIs are resolved using lazy registration of metamodels, see below.
 	private String inputMetamodelNsURI;
@@ -69,11 +104,11 @@ public class ATLLauncher {
 		Metamodel inMetamodel = EmftvmFactory.eINSTANCE.createMetamodel();
 		inMetamodel.setResource(rs.getResource(URI.createURI(inputMetamodelNsURI), true));
 		env.registerMetaModel(IN_METAMODEL_NAME, inMetamodel);
-		
+
 		Metamodel outMetamodel = EmftvmFactory.eINSTANCE.createMetamodel();
 		outMetamodel.setResource(rs.getResource(URI.createURI(outputMetamodelNsURI), true));
 		env.registerMetaModel(OUT_METAMODEL_NAME, outMetamodel);
-		
+
 		/*
 		 * Create and register resource factories to read/parse .xmi and .emftvm files,
 		 * we need an .xmi parser because our in/output models are .xmi and our transformations are
@@ -98,7 +133,9 @@ public class ATLLauncher {
 		 */
 		ModuleResolver mr = new DefaultModuleResolver(transformationDir, rs);
 		TimingData td = new TimingData();
-		env.loadModule(mr, TRANSFORMATION_MODULE);
+		System.err.println(transformationDir);
+		System.err.println(transformationModule);
+		env.loadModule(mr, transformationModule);
 		td.finishLoading();
 		env.run(td);
 		td.finish();
@@ -155,13 +192,26 @@ public class ATLLauncher {
 	}
 	
 	/*
-	 *  A test main method, I'm using constants so I can quickly change the case study by simply
-	 *  modifying the header of the class.
+	 *  A main method.
 	 */	
 	public static void main(String ... args){
-		ATLLauncher l = new ATLLauncher();
-		l.registerInputMetamodel(IN_METAMODEL);
-		l.registerOutputMetamodel(OUT_METAMODEL);
-		l.launch(IN_METAMODEL, IN_MODEL, OUT_METAMODEL, OUT_MODEL, TRANSFORMATION_DIR, TRANSFORMATION_MODULE);
+		int exitCode = new CommandLine(new ATLLauncher()).execute(args);
+		System.exit(exitCode);	
+	}
+	
+	@Override
+	public Integer call() throws Exception {
+		
+
+		System.out.println(TRANSFORMATION_DIR);
+		System.out.println(TRANSFORMATION_MODULE);
+		
+		//ATLLauncher l = new ATLLauncher();
+		this.registerInputMetamodel(IN_METAMODEL);
+		this.registerOutputMetamodel(OUT_METAMODEL);
+		this.launch(IN_METAMODEL, IN_MODEL, OUT_METAMODEL, OUT_MODEL, TRANSFORMATION_DIR, TRANSFORMATION_MODULE);
+	
+		return 0;
+		
 	}
 }
